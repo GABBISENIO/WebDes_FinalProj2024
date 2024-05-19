@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Cart</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+            color: #333;
+        }
+
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        th,
+        td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background-color: #333;
+            color: #fff;
+        }
+
+        .quantity-input {
+            width: 50px;
+            margin: 0 auto;
+            display: block;
+        }
+
+        td.quantity {
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        .checkout-btn {
+            background-color: #333;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .checkout-btn:hover {
+            background-color: #555;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+            position: absolute;
+            top: 20px;
+            left: 20px;
+        }
+
+        ul li {
+            display: inline;
+            margin-right: 10px;
+        }
+
+        ul li a {
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .item-image {
+            max-width: 100px;
+            max-height: 100px;
+        }
+
+        .payment-section {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .payment-section h2 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .payment-section input[type="radio"] {
+            margin-right: 10px;
+        }
+
+        .payment-section label {
+            color: #333;
+            font-weight: bold;
+        }
+
+        .th.quantity-header {
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        .clear-btn {
+            background-color: #ff3333;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-bottom: 20px;
+        }
+
+        .clear-btn:hover {
+            background-color: #ff6666;
+        }
+
+        .address-section {
+            margin-top: 20px;
+        }
+
+        .address-section input {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>Your Order Summary</h1>
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="products.html">Products</a></li>
+            <li><a href="aboutnike.html">About Us</a></li>
+            <li><a href="viewcart.html">View Cart</a></li>
+        </ul>
+    </header>
+    <div class="container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Item</th>
+                    <th>Image</th>
+                    <th>Price</th>
+                    <th class="th quantity-header">Quantity</th>
+                </tr>
+            </thead>
+            <tbody id="cart-items">
+            </tbody>
+        </table>
+        <div class="address-section">
+            <h2>Shipping Details</h2>
+            <input type="text" id="user-name" placeholder="Full Name">
+            <input type="text" id="user-address" placeholder="Address">
+            <input type="text" id="user-postal-code" placeholder="Postal Code">
+        </div>
+        <button class="checkout-btn" onclick="checkout()">Checkout</button>
+        <button class="clear-btn" onclick="clearCart()">Clear Cart</button>
+        <div class="container payment-section">
+            <h2>Select Mode of Payment</h2>
+            <input type="radio" id="gcash" name="payment" value="GCash">
+            <label for="gcash">GCash</label><br>
+            <input type="radio" id="bank-transfer" name="payment" value="Bank Transfer">
+            <label for="bank-transfer">Bank Transfer</label><br>
+            <input type="radio" id="cash-on-delivery" name="payment" value="Cash on Delivery">
+            <label for="cash-on-delivery">Cash on Delivery</label><br>
+        </div>
+    </div>
+    <script>
+        function getUrlParameter(name) {
+            name = name.replace(/[[]/, '\\[').replace(/[\]]/, '\\]');
+            var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+            var results = regex.exec(location.search);
+            return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+        }
+
+        function displayCartItems() {
+            var tableBody = document.getElementById('cart-items');
+            var cartItems = localStorage.getItem('cartItems');
+
+            if (cartItems) {
+                cartItems = JSON.parse(cartItems);
+
+                cartItems.forEach(function (item) {
+                    var row = document.createElement('tr');
+
+                    var itemNameCell = document.createElement('td');
+                    itemNameCell.textContent = item.name;
+
+                    var itemImageCell = document.createElement('td');
+                    var itemImage = document.createElement('img');
+                    itemImage.src = item.image;
+                    itemImage.alt = item.name;
+                    itemImage.className = 'item-image';
+                    itemImageCell.appendChild(itemImage);
+
+                    var itemPriceCell = document.createElement('td');
+                    itemPriceCell.textContent = '$' + parseFloat(item.price).toFixed(2);
+
+                    var quantityCell = document.createElement('td');
+                    var quantityInput = document.createElement('input');
+                    quantityInput.type = 'number';
+                    quantityInput.value = 1;
+                    quantityInput.min = 1;
+                    quantityInput.className = 'quantity-input';
+                    quantityInput.addEventListener('change', updateTotal);
+                    quantityCell.appendChild(quantityInput);
+
+                    row.appendChild(itemNameCell);
+                    row.appendChild(itemImageCell);
+                    row.appendChild(itemPriceCell);
+                    row.appendChild(quantityCell);
+
+                    tableBody.appendChild(row);
+                });
+            } else {
+                var emptyRow = document.createElement('tr');
+                var emptyCell = document.createElement('td');
+                emptyCell.colSpan = 4;
+                emptyCell.textContent = 'Your cart is empty';
+                emptyRow.appendChild(emptyCell);
+                tableBody.appendChild(emptyRow);
+            }
+        }
+
+        function updateTotal(event) {
+            var tableBody = document.getElementById('cart-items');
+            var rows = tableBody.getElementsByTagName('tr');
+            var total = 0;
+            for (var i = 0; i < rows.length; i++) {
+                var cells = rows[i].getElementsByTagName('td');
+                var price = parseFloat(cells[2].textContent.replace('$', ''));
+                var quantity = parseInt(cells[3].querySelector('.quantity-input').value);
+                total += price * quantity;
+            }
+            document.getElementById('total-price').textContent = '$' + total.toFixed(2);
+        }
+
+        function checkout() {
+            var tableBody = document.getElementById('cart-items');
+            var rows = tableBody.getElementsByTagName('tr');
+            var storeName = "Inori's Gundam Store";
+            var summary = storeName + '\n\n';
+            var paymentMethod = '';
+            var total = 0;
+            for (var i = 0; i < rows.length; i++) {
+                var cells = rows[i].getElementsByTagName('td');
+                var itemName = cells[0].textContent;
+                var price = parseFloat(cells[2].textContent.replace('$', ''));
+                var quantity = parseInt(cells[3].querySelector('.quantity-input').value);
+                total += price * quantity;
+                summary += itemName + ' - Quantity: ' + quantity + ', Total Price: $' + (price * quantity).toFixed(2) + '\n';
+            }
+            var paymentOptions = document.getElementsByName('payment');
+            for (var j = 0; j < paymentOptions.length; j++) {
+                if (paymentOptions[j].checked) {
+                    paymentMethod = paymentOptions[j].value;
+                    break;
+                }
+            }
+
+            var userName = document.getElementById('user-name').value;
+            var userAddress = document.getElementById('user-address').value;
+            var userPostalCode = document.getElementById('user-postal-code').value;
+            var VAT = total * 0.12;
+            var totalPriceWithVAT = total + VAT;
+
+            summary += '\nSubtotal: $' + total.toFixed(2);
+            summary += '\nVAT (12%): $' + VAT.toFixed(2);
+            summary += '\nTotal Price (with VAT): $' + totalPriceWithVAT.toFixed(2);
+            summary += '\nPayment Method: ' + paymentMethod;
+            summary += '\n\nShipping Details:';
+            summary += '\nName: ' + userName;
+            summary += '\nAddress: ' + userAddress;
+            summary += '\nPostal Code: ' + userPostalCode;
+
+            alert(summary);
+
+            // Clear the cart and redirect to the product page
+            localStorage.removeItem('cartItems');
+            location.href = 'homepage2.html';
+        }
+
+        function clearCart() {
+            localStorage.removeItem('cartItems');
+            location.reload();
+        }
+
+        window.onload = function () {
+            displayCartItems();
+            updateTotal();
+        };
+    </script>
+</body>
+
+</html>

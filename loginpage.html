@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+            color: #333;
+        }
+
+        .container {
+            max-width: 400px;
+            margin: 100px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            text-align: center;
+        }
+
+        form {
+            margin-top: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input[type="email"],
+        input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        input[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            background-color: #333;
+            color: #fff;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #555;
+        }
+
+        p {
+            text-align: center;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Login</h2>
+        <form id="loginForm">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" required>
+            
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" required>
+            
+            <input type="submit" value="Login">
+        </form>
+        <p>Don't have an account? <a href="signuppage.html">Sign up here</a>.</p>
+    </div>
+    <script>
+        document.getElementById('loginForm').onsubmit = function(e) {
+            e.preventDefault();
+            var email = document.getElementById('email').value;
+            var password = document.getElementById('password').value;
+
+            var storedEmail = localStorage.getItem('email');
+            var storedPassword = localStorage.getItem('password');
+
+            if (email === storedEmail && password === storedPassword) {
+                window.location.href = 'index.html';
+            } else {
+                alert('Email or password is incorrect. Redirecting to signup page.');
+                window.location.href = 'signuppage.html';
+            }
+        }
+    </script>
+</body>
+</html>
